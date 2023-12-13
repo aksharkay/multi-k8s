@@ -1,0 +1,16 @@
+language: generic 
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t aksharkay/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true aksharkay/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t aksharkay/multi-client ./client
+  - docker build -t aksharkay/multi-nginx ./nginx
+  - docker build -t aksharkay/multi-server ./server
+  - docker build -t aksharkay/multi-worker ./worker
